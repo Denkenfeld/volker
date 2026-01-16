@@ -24,8 +24,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             transition: opacity 0.5s ease;
         }
         
@@ -89,10 +89,8 @@
         #starwars-section {
             position: relative;
             width: 100%;
-            min-height: 300vh;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
+            min-height: 400vh;
+            overflow: hidden;
         }
         
         #introtext {
@@ -100,7 +98,7 @@
             top: 0;
             width: 100%;
             height: 100vh;
-            perspective: 400px;
+            perspective: 300px;
             overflow: hidden;
             display: flex;
             align-items: flex-end;
@@ -108,19 +106,22 @@
         }
         
         #crawl {
-            position: relative;
-            transform: rotateX(25deg);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateZ(0) rotateX(25deg);
             transform-origin: 50% 100%;
-            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-size: clamp(8.5rem, 32vw, 12rem);
             font-weight: bold;
             text-align: justify;
-            padding: 0 10%;
-            line-height: 1.8;
+            padding: 0 5%;
+            line-height: 1.5;
             color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            width: 100%;
-            max-width: 800px;
-            padding-bottom: 50vh;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+                         0 0 40px rgba(255, 215, 0, 0.4);
+            width: 90%;
+            max-width: 1200px;
+            transform-style: preserve-3d;
         }
         
         /* Finale Section */
@@ -215,6 +216,20 @@
     </div>
 
     <script>
+        // ===== Canvas Size Fix - VOR WebGL Setup =====
+        function resizeCanvas(canvas) {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+        }
+
+        // Initialisiere Canvas-Größen SOFORT
+        resizeCanvas(document.getElementById('canvas1'));
+        resizeCanvas(document.getElementById('canvas2'));
+        resizeCanvas(document.getElementById('canvas3'));
+
         // ===== WebGL Setup Helper =====
         function setupWebGL(canvasId, fragmentShaderSource) {
             const canvas = document.getElementById(canvasId);
@@ -224,9 +239,6 @@
                 console.error('WebGL not supported');
                 return null;
             }
-
-            canvas.width = canvas.clientWidth;
-            canvas.height = canvas.clientHeight;
 
             const vsSource = `
                 attribute vec4 aVertexPosition;
@@ -473,9 +485,9 @@
             function render(time) {
                 const { canvas, gl, program, uRes, uTime } = ctx;
                 
-                if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-                    canvas.width = canvas.clientWidth;
-                    canvas.height = canvas.clientHeight;
+                if (canvas.width !== canvas.clientWidth * (window.devicePixelRatio || 1) ||
+                    canvas.height !== canvas.clientHeight * (window.devicePixelRatio || 1)) {
+                    resizeCanvas(canvas);
                     gl.viewport(0, 0, canvas.width, canvas.height);
                 }
                 
@@ -494,6 +506,24 @@
         renderContext(ctx2);
         renderContext(ctx3);
 
+        // ===== Star Wars Crawl Scroll Effect =====
+        const crawl = document.getElementById('crawl');
+        const starwarsSection = document.getElementById('starwars-section');
+        
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.scrollY;
+            const sectionStart = starwarsSection.offsetTop;
+            const sectionHeight = starwarsSection.offsetHeight;
+            const relativeScroll = scrollPos - sectionStart;
+            
+            // Move text up as user scrolls (starts at bottom, moves to top)
+            if (relativeScroll >= 0 && relativeScroll <= sectionHeight) {
+                const progress = relativeScroll / sectionHeight;
+                const translateY = (1 - progress) * 100; // 100% to 0%
+                crawl.style.transform = `translateX(-50%) translateY(${translateY}%) rotateX(25deg)`;
+            }
+        });
+
         // ===== Interactivity =====
         const startscreen = document.getElementById('startscreen');
         const scrollcontainer = document.getElementById('scrollcontainer');
@@ -501,7 +531,6 @@
         const canvas1 = document.getElementById('canvas1');
         const canvas2 = document.getElementById('canvas2');
         const canvas3 = document.getElementById('canvas3');
-        const starwarsSection = document.getElementById('starwars-section');
 
         // Startscreen Click
         startscreen.addEventListener('click', () => {
@@ -533,6 +562,13 @@
                 canvas2.style.opacity = '0';
                 canvas3.style.opacity = '1';
             }
+        });
+
+        // Window Resize Handler
+        window.addEventListener('resize', () => {
+            resizeCanvas(document.getElementById('canvas1'));
+            resizeCanvas(document.getElementById('canvas2'));
+            resizeCanvas(document.getElementById('canvas3'));
         });
     </script>
 </body>
