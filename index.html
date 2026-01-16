@@ -85,43 +85,23 @@
             opacity: 1;
         }
         
-        /* Star Wars Intro Sektion */
-        #starwars-section {
+        /* Text Sektion */
+        #text-section {
             position: relative;
             width: 100%;
-            min-height: 400vh;
-            overflow: hidden;
+            min-height: 300vh;
+            padding: 10vh 5%;
         }
         
-        #introtext {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 100vh;
-            perspective: 300px;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        
-        #crawl {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateZ(0) rotateX(25deg);
-            transform-origin: 50% 100%;
-            font-size: clamp(8.5rem, 32vw, 12rem);
+        #birthday-text {
+            font-size: clamp(3rem, 10vw, 5rem);
             font-weight: bold;
-            text-align: justify;
-            padding: 0 5%;
-            line-height: 1.5;
+            line-height: 1.6;
             color: #ffd700;
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
                          0 0 40px rgba(255, 215, 0, 0.4);
-            width: 90%;
-            max-width: 1200px;
-            transform-style: preserve-3d;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
         /* Finale Section */
@@ -192,20 +172,18 @@
     
     <!-- Scroll Container -->
     <div id="scrollcontainer">
-        <!-- Star Wars Section -->
-        <div id="starwars-section">
-            <div id="introtext">
-                <div id="crawl">
-                    Herzlichen Glückwunsch zum Geburtstag, Dr. Volker K.!<br><br>
-                    
-                    Während andere Architekten noch mit Bleistift und Papier hantieren, beamt sich VK längst in die Zukunft der KI-gestützten Gebäudeplanung – Captain Kirk hätte ihn sofort als Chief Architect auf die Enterprise geholt!<br><br>
-                    
-                    Seine IFC-Dateien analysiert er mit künstlicher Intelligenz so präzise, dass selbst Data neidisch wäre, und dabei verwandelt er trockene BIM-Daten in lebendige Gebäude-Lebenszyklen.<br><br>
-                    
-                    Am BeamLM des KIT sorgt er dafür, dass Bauwerke nicht nur in die Höhe wachsen, sondern intelligent werden – "Beam me up, VK!" könnte das neue Motto der Baubranche werden.<br><br>
-                    
-                    Möge dein heutiger Ehrentag genauso innovativ sein wie deine Forschung, und mögen alle deine Algorithmen fehlerfrei kompilieren – auf die nächsten Lichtjahre voller bahnbrechender Architektur-KI!
-                </div>
+        <!-- Text Section -->
+        <div id="text-section">
+            <div id="birthday-text">
+                Herzlichen Glückwunsch zum Geburtstag, Dr. Volker K.!<br><br>
+                
+                Während andere Architekten noch mit Bleistift und Papier hantieren, beamt sich VK längst in die Zukunft der KI-gestützten Gebäudeplanung – Captain Kirk hätte ihn sofort als Chief Architect auf die Enterprise geholt!<br><br>
+                
+                Seine IFC-Dateien analysiert er mit künstlicher Intelligenz so präzise, dass selbst Data neidisch wäre, und dabei verwandelt er trockene BIM-Daten in lebendige Gebäude-Lebenszyklen.<br><br>
+                
+                Am BeamLM des KIT sorgt er dafür, dass Bauwerke nicht nur in die Höhe wachsen, sondern intelligent werden – "Beam me up, VK!" könnte das neue Motto der Baubranche werden.<br><br>
+                
+                Möge dein heutiger Ehrentag genauso innovativ sein wie deine Forschung, und mögen alle deine Algorithmen fehlerfrei kompilieren – auf die nächsten Lichtjahre voller bahnbrechender Architektur-KI!
             </div>
         </div>
         
@@ -506,24 +484,6 @@
         renderContext(ctx2);
         renderContext(ctx3);
 
-        // ===== Star Wars Crawl Scroll Effect =====
-        const crawl = document.getElementById('crawl');
-        const starwarsSection = document.getElementById('starwars-section');
-        
-        window.addEventListener('scroll', () => {
-            const scrollPos = window.scrollY;
-            const sectionStart = starwarsSection.offsetTop;
-            const sectionHeight = starwarsSection.offsetHeight;
-            const relativeScroll = scrollPos - sectionStart;
-            
-            // Move text up as user scrolls (starts at bottom, moves to top)
-            if (relativeScroll >= 0 && relativeScroll <= sectionHeight) {
-                const progress = relativeScroll / sectionHeight;
-                const translateY = (1 - progress) * 100; // 100% to 0%
-                crawl.style.transform = `translateX(-50%) translateY(${translateY}%) rotateX(25deg)`;
-            }
-        });
-
         // ===== Interactivity =====
         const startscreen = document.getElementById('startscreen');
         const scrollcontainer = document.getElementById('scrollcontainer');
@@ -531,6 +491,7 @@
         const canvas1 = document.getElementById('canvas1');
         const canvas2 = document.getElementById('canvas2');
         const canvas3 = document.getElementById('canvas3');
+        const textSection = document.getElementById('text-section');
 
         // Startscreen Click
         startscreen.addEventListener('click', () => {
@@ -553,11 +514,11 @@
         // Scroll Detection for Canvas 3
         let canvas3Active = false;
         window.addEventListener('scroll', () => {
-            const starwarsSectionBottom = starwarsSection.offsetTop + starwarsSection.offsetHeight;
+            const textSectionBottom = textSection.offsetTop + textSection.offsetHeight;
             const scrollPos = window.scrollY + window.innerHeight;
             
-            // Switch to canvas 3 when Star Wars section ends
-            if (scrollPos > starwarsSectionBottom && !canvas3Active) {
+            // Switch to canvas 3 when text section ends
+            if (scrollPos > textSectionBottom && !canvas3Active) {
                 canvas3Active = true;
                 canvas2.style.opacity = '0';
                 canvas3.style.opacity = '1';
